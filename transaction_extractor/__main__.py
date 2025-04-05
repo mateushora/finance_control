@@ -17,7 +17,7 @@ def main():
         print("\nExtracted Transactions:")
         print(df)
         
-        # Save to CSV
+        # Save to Excel
         output_path = "transactions.xlsx"
         df.to_excel(output_path, index=False)
         print(f"\nTransactions saved to {output_path}")
