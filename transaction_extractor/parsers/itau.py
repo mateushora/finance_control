@@ -65,6 +65,10 @@ class ItauParser(TransactionParser):
         if not self.check_consistency(df):
             raise ValueError("Inconsistent data: Final balance doesn't match the sum of transactions")
         
+        # Check if all categories are valid according to categories.yaml
+        if not self._check_categories(df):
+            raise ValueError("Invalid categories found in transactions")
+
         # Format the DataFrame
         return self.prettify(df)
 

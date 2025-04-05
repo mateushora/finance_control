@@ -33,6 +33,43 @@ class TransactionParser(ABC):
         # If no match found, return as unidentified
         return 'Não Identificado', None
 
+    def _check_categories(self, df: pd.DataFrame) -> bool:
+        """
+        Check if all categories in the DataFrame match those defined in categories.yaml.
+        
+        Args:
+            df: DataFrame containing transactions with 'category' and 'subcategory' columns
+            
+        Returns:
+            bool: True if all categories are valid, False otherwise
+        """
+        # Get unique categories from DataFrame
+        df_categories = df['category'].unique()
+        
+        # Check if each category exists in YAML categories
+        for category in df_categories:
+            if category != 'Não Identificado' and category not in self.categories:
+                return False
+            
+            # If category exists, check its subcategories
+            if category != 'Não Identificado':
+                # Get subcategories for transactions with this category
+                df_subcategories = df[df['category'] == category]['subcategory'].unique()
+                
+                # Get valid subcategories from YAML
+                valid_subcategories = self.categories[category]
+                
+                # Check each subcategory
+                for subcategory in df_subcategories:
+                    # Skip None/empty subcategories
+                    if pd.isna(subcategory) or subcategory == '':
+                        continue
+                        
+                    if subcategory not in valid_subcategories:
+                        return False
+        
+        return True
+
     @abstractmethod
     def check_consistency(self, df: pd.DataFrame) -> bool:
         """
@@ -64,7 +101,7 @@ class TransactionParser(ABC):
 
         # Replace Itau with Itaú in bank name
         df['bank'] = df['bank'].replace('Itau', 'Itaú')
-        
+
         # Select and order columns
         formatted_df = df[[
             'year', 'month', 'day', 'bank', 'category', 'subcategory', 
