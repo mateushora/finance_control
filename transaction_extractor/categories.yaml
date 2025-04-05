@@ -1,0 +1,80 @@
+categories:
+  Alimentação:
+    - Delivery
+    - Marmitas
+    - Restaurante
+
+  Compras:
+    - Cartão de Crédito
+    - Eletrônicos
+    - Itens de Casa
+    - Jogos
+    - Presentes
+    - Vestuário
+
+  Cuidados Pessoais:
+    - Academia
+    - Barbearia
+    - Skin Care
+
+  Despesas Essenciais:
+    - Aluguel/IPTU
+    - Condomínio
+    - Faxina
+    - Gás/Luz/Água
+    - Lavanderia
+    - Mercado
+    - Telefone
+    - TV/Internet
+    - Serviços
+
+  Educação:
+    - Cursos
+
+  Lazer:
+    - Bar/Restaurante
+    - Bebidas
+    - Cinema
+    - Festas/Shows
+    - Serviços por Assinatura
+
+  Receitas:
+    - PLR/Bônus
+    - Reembolso/Cashback
+    - Salário
+    - Vale-Refeição
+    - Vendas
+
+  Saúde:
+    - Remédios
+    - Consultas Médicas
+
+  Transporte:
+    - App/Táxi
+    - Passagens Aéreas
+    - Passagens de Ônibus
+
+  Viagens:
+    - Hospedagem
+    - Ingressos
+    - BCG
+
+  Doações:
+    - Família
+
+  Investimentos:
+    - CDB Banco
+    - CDB
+
+  Não Identificado: []
+
+  Transferência entre Contas:
+    - Itaú
+    - Splitwise
+    - Outros
+    - Inter
+    - Nubank
+    - PicPay
+
+  Conversão de Câmbio:
+    - Wise 
