@@ -38,6 +38,7 @@ python -m transaction_extractor -b <bank_name> -f <file_path> [-o <output_path>]
   - `picpay`: PicPay statements
   - `splitwise`: Splitwise statements
   - `creditas`: Creditas statements
+  - `chromeriver`: Chrome River expense reports
 
 - `-f, --file`: (Required) Path to the bank statement file (PDF or image)
 

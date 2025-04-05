@@ -12,7 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description='Extract transactions from bank statements.')
     parser.add_argument('-b', '--bank', 
                       required=True,
-                      choices=['itau', 'inter', 'nubank', 'picpay', 'splitwise', 'creditas'],
+                      choices=['itau', 'inter', 'nubank', 'picpay', 'splitwise', 'creditas', 'chromeriver'],
                       help='Bank name to process statements from')
     parser.add_argument('-f', '--file',
                       required=True,

@@ -5,6 +5,7 @@ from .splitwise import SplitwiseParser
 from .nubank import NubankParser
 from .picpay import PicPayParser
 from .creditas import CreditasParser
+from .chrome_river import ChromeRiverParser
 
 __all__ = [
     'TransactionParser',
@@ -14,4 +15,5 @@ __all__ = [
     'NubankParser',
     'PicPayParser',
     'CreditasParser',
+    'ChromeRiverParser'
 ] 

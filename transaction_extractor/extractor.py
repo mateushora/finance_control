@@ -6,8 +6,9 @@ import numpy as np
 from typing import List
 from pdf2image import convert_from_path
 from .parsers import (
-    InterParser, ItauParser, SplitwiseParser,
-    PicPayParser, NubankParser, CreditasParser
+    TransactionParser, InterParser, ItauParser, SplitwiseParser,
+    PicPayParser, NubankParser, CreditasParser,
+    ChromeRiverParser
 )
 
 # Configure logging
@@ -30,22 +31,22 @@ class TransactionExtractor:
         # Initialize the appropriate parser based on the bank
         self.parser = self._get_parser(bank)
 
-    def _get_parser(self, bank: str):
-        """Get the appropriate parser for the specified bank."""
+    def _get_parser(self, bank: str) -> TransactionParser:
+        """Get the appropriate parser for the given bank."""
         parsers = {
-            'inter': InterParser(),
-            'itau': ItauParser(),
-            'splitwise': SplitwiseParser(),
-            'picpay': PicPayParser(),
-            'nubank': NubankParser(),
-            'creditas': CreditasParser()
+            'itau': ItauParser,
+            'inter': InterParser,
+            'nubank': NubankParser,
+            'picpay': PicPayParser,
+            'splitwise': SplitwiseParser,
+            'creditas': CreditasParser,
+            'chrome_river': ChromeRiverParser
         }
         
-        bank_lower = bank.lower()
-        if bank_lower not in parsers:
-            raise ValueError(f"Unsupported bank: {bank}. Supported banks are: {', '.join(parsers.keys())}")
-        
-        return parsers[bank_lower]
+        parser_class = parsers.get(bank.lower())
+        if not parser_class:
+            raise ValueError(f"Unsupported bank: {bank}")
+        return parser_class()
 
     def detect_tables(self, image: np.ndarray) -> List[np.ndarray]:
         """Detect tables in the image and return their regions."""
