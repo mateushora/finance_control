@@ -32,7 +32,7 @@ Before using this application, you need to install:
 3. The script will:
    - Process the file
    - Extract transaction information
-   - Save the results to a CSV file named `transactions.xlsx`
+   - Save the results to an Excel file named `transactions.xlsx`
 
 ## Customization
 
