@@ -24,26 +24,30 @@ Before using this application, you need to install:
 ## Usage
 
 1. Place your bank statement files (PDF or images) in a directory
-2. Run the script:
+2. Run the module:
    ```bash
-   python transaction_extractor.py
+   python -m transaction_extractor
    ```
 
 3. The script will:
    - Process the file
    - Extract transaction information
-   - Save the results to a CSV file named `transactions.csv`
+   - Save the results to a CSV file named `transactions.xlsx`
 
 ## Customization
 
-The current implementation includes basic transaction parsing. You may need to customize the `parse_transactions` method in `transaction_extractor.py` to match your specific bank statement format. Look for patterns in your bank statements and adjust the parsing logic accordingly.
+The application currently supports Itaú bank statements through a dedicated parser. To add support for other banks:
+
+1. Create a new parser class in `transaction_extractor/parsers/` that inherits from `BaseParser`
+2. Implement the required parsing methods for your bank's format
+3. Register your parser in `transaction_extractor/extractor.py`
 
 ## Features
 
-- Supports both PDF and image files (JPG, JPEG, PNG, BMP)
+- Currently only supports PDF files
 - Image preprocessing for better OCR accuracy
 - Structured output in pandas DataFrame format
-- Automatic CSV export
+- Automatic Excel export
 - Error handling and logging
 
 ## Notes
