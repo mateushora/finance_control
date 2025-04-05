@@ -18,7 +18,7 @@ def main():
         print(df)
         
         # Save to Excel
-        output_path = "transactions.xlsx"
+        output_path = "data/transactions.xlsx"
         df.to_excel(output_path, index=False)
         print(f"\nTransactions saved to {output_path}")
         
