@@ -84,6 +84,20 @@ class TransactionParser(ABC):
         """Parse the extracted text into a structured DataFrame of transactions."""
         pass
 
+    @abstractmethod
+    def clean_text(self, text: str) -> str:
+        """
+        Clean and standardize the input text before parsing.
+        Each parser should implement its own text cleaning logic.
+
+        Args:
+            text: Raw text extracted from statement
+
+        Returns:
+            Cleaned text ready for parsing
+        """
+        pass
+
     def prettify(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Transform the DataFrame into a standardized format with specific columns.

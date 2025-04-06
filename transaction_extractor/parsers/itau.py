@@ -30,10 +30,48 @@ class ItauParser(TransactionParser):
             }
         ]
 
+    def clean_text(self, text: str) -> str:
+        """Clean the text by removing unwanted content."""
+        lines = text.split('\n')
+        cleaned_lines = []
+        start_processing = False
+        
+        for line in lines:
+            # Start processing when we find "SALDO INICIAL"
+            if "SALDO INICIAL" in line:
+                start_processing = True
+            
+            # Only process lines if we've started
+            if start_processing:
+                # Remove all special characters
+                line = re.sub(r'[(\[\]|)]', ' ', line)
+                
+                # Remove thousand separators from numbers
+                line = re.sub(r'(\d+)\.(\d+,\d{2})', r'\1\2', line)
+
+                # Remove whitespaces from beginning and end of line
+                line = line.strip()
+
+                # Remove any special characters from the end of the line
+                line = re.sub(r'[^\w\s]$', '', line)
+
+                # Remove double spaces
+                line = re.sub(r'\s+', ' ', line)
+
+                # Change special characters after the date to a space
+                line = re.sub(r'(\d{2}/\d{2}/\d{4})[^\w\s]', r'\1 ', line)
+                
+                cleaned_lines.append(line)
+
+                if "SALDO FINAL" in line:
+                    break
+        
+        return '\n'.join(cleaned_lines) 
+
     def parse(self, text: str) -> pd.DataFrame:
         """Parse Itaú bank statements."""
         # Clean the text first
-        cleaned_text = self._clean_text(text)
+        cleaned_text = self.clean_text(text)
         
         transactions = []
         lines = cleaned_text.split('\n')
@@ -98,41 +136,3 @@ class ItauParser(TransactionParser):
         except (IndexError, KeyError):
             # If we can't find SALDO INICIAL or SALDO FINAL, data is inconsistent
             return False
-
-    def _clean_text(self, text: str) -> str:
-        """Clean the text by removing unwanted content."""
-        lines = text.split('\n')
-        cleaned_lines = []
-        start_processing = False
-        
-        for line in lines:
-            # Start processing when we find "SALDO INICIAL"
-            if "SALDO INICIAL" in line:
-                start_processing = True
-            
-            # Only process lines if we've started
-            if start_processing:
-                # Remove all special characters
-                line = re.sub(r'[(\[\]|)]', ' ', line)
-                
-                # Remove thousand separators from numbers
-                line = re.sub(r'(\d+)\.(\d+,\d{2})', r'\1\2', line)
-
-                # Remove whitespaces from beginning and end of line
-                line = line.strip()
-
-                # Remove any special characters from the end of the line
-                line = re.sub(r'[^\w\s]$', '', line)
-
-                # Remove double spaces
-                line = re.sub(r'\s+', ' ', line)
-
-                # Change special characters after the date to a space
-                line = re.sub(r'(\d{2}/\d{2}/\d{4})[^\w\s]', r'\1 ', line)
-                
-                cleaned_lines.append(line)
-
-                if "SALDO FINAL" in line:
-                    break
-        
-        return '\n'.join(cleaned_lines) 
