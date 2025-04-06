@@ -1,54 +1,22 @@
-import os
 import cv2
 import logging
 import pytesseract
 import numpy as np
-from typing import List
+from .base import TransactionExtractor
 from pdf2image import convert_from_path
-from .parsers import (
-    TransactionParser, InterParser, ItauParser, SplitwiseParser,
-    PicPayParser, NubankParser, CreditasParser,
-    ChromeRiverParser
-)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-class TransactionExtractor:
-    def __init__(self, bank: str):
-        """Initialize the transaction extractor."""
-        if not bank:
-            raise ValueError("Bank parameter is required")
-            
-        # Ensure Tesseract is installed and accessible
-        try:
-            pytesseract.get_tesseract_version()
-        except Exception as e:
-            logger.error("Tesseract OCR is not installed or not in PATH. Please install it first.")
-            raise e
-        
-        # Initialize the appropriate parser based on the bank
-        self.parser = self._get_parser(bank)
+class ItauExtractor(TransactionExtractor):
+    """Extractor for Itau bank statements."""
+    
+    def __init__(self):
+        """Initialize the Itau extractor."""
+        super().__init__()
 
-    def _get_parser(self, bank: str) -> TransactionParser:
-        """Get the appropriate parser for the given bank."""
-        parsers = {
-            'itau': ItauParser,
-            'inter': InterParser,
-            'nubank': NubankParser,
-            'picpay': PicPayParser,
-            'splitwise': SplitwiseParser,
-            'creditas': CreditasParser,
-            'chrome_river': ChromeRiverParser
-        }
-        
-        parser_class = parsers.get(bank.lower())
-        if not parser_class:
-            raise ValueError(f"Unsupported bank: {bank}")
-        return parser_class()
-
-    def detect_tables(self, image: np.ndarray) -> List[np.ndarray]:
+    def detect_tables(self, image: np.ndarray) -> list:
         """Detect tables in the image and return their regions."""
         # Convert to grayscale
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -164,13 +132,6 @@ class TransactionExtractor:
             logger.error(f"Error processing PDF {pdf_path}: {str(e)}")
             raise
 
-    def process_file(self, file_path: str):
-        """Process a file (image or PDF) and return a DataFrame of transactions."""
-        file_ext = os.path.splitext(file_path)[1].lower()
-        
-        if file_ext == '.pdf':
-            text = self.extract_text_from_pdf(file_path)
-        else:
-            raise ValueError("Currently only PDF files are supported for table detection")
-        
-        return self.parser.parse(text) 
+    def extract_text_from_image(self, image_path: str) -> str:
+        """Extract text from an image file. Not implemented for Itau."""
+        raise NotImplementedError("Image extraction not supported for Itau statements")

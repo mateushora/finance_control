@@ -1,3 +1,3 @@
-from .extractor import TransactionExtractor
+from .extractors import ItauExtractor, ChromeRiverExtractor
 
-__all__ = ['TransactionExtractor'] 
+__all__ = ['ItauExtractor', 'ChromeRiverExtractor'] 
