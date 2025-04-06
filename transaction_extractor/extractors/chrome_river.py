@@ -115,3 +115,7 @@ class ChromeRiverExtractor(TransactionExtractor):
         except Exception as e:
             logger.error(f"Error processing image {image_path}: {str(e)}")
             raise
+
+    def extract_text_from_pdf(self, pdf_path: str) -> str:
+        """Extract text from a PDF file. Not implemented for Chrome River."""
+        raise NotImplementedError("PDF extraction not supported for Chrome River statements")
