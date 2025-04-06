@@ -66,21 +66,44 @@ class ChromeRiverExtractor(TransactionExtractor):
         # Convert to grayscale
         gray = cv2.cvtColor(table_image, cv2.COLOR_BGR2GRAY)
         
-        # Apply thresholding
-        thresh = cv2.adaptiveThreshold(
-            gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY, 11, 2
-        )
+        # Scale up the image by 2x for better detail
+        scaled = cv2.resize(gray, None, fx=2.0, fy=2.0, interpolation=cv2.INTER_CUBIC)
         
-        return thresh
+        # Increase contrast using CLAHE
+        clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(16,16))
+        contrast = clahe.apply(scaled)
+        
+        # Denoise
+        denoised = cv2.fastNlMeansDenoising(contrast)
+        
+        # Apply Otsu's thresholding
+        _, thresh = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        
+        # Remove small noise
+        kernel = np.ones((2, 2), np.uint8)
+        opening = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel)
+        
+        # Dilate slightly to make text more prominent, especially numbers
+        kernel = np.ones((2, 1), np.uint8)  # Vertical dilation to connect number parts
+        processed = cv2.dilate(opening, kernel, iterations=1)
+        
+        return processed
 
     def extract_text_from_table(self, table_image: np.ndarray) -> str:
         """Extract text from a table image using OCR."""
         # Preprocess the table image
         processed_table = self.preprocess_table(table_image)
         
-        # Configure Tesseract
-        custom_config = r'--oem 3 --psm 6 -l eng'
+        # Configure Tesseract for better recognition of dates and numbers
+        custom_config = (
+            '--oem 3 '  # Use LSTM OCR Engine
+            '--psm 6 '  # Assume uniform block of text
+            '-l eng '   # English language
+            '--dpi 300 '  # High DPI for better recognition
+            '-c tessedit_char_whitelist=0123456789/ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,-$ '  # Limit characters
+            '-c preserve_interword_spaces=1 '
+            '-c tessedit_do_invert=0'  # Don't invert colors
+        )
         
         # Perform OCR
         text = pytesseract.image_to_string(
@@ -108,7 +131,14 @@ class ChromeRiverExtractor(TransactionExtractor):
             all_text = []
             for i, table in enumerate(table_regions):
                 logger.info(f"Processing table {i+1} of {len(table_regions)}")
+                # Try different scales if text extraction fails
                 text = self.extract_text_from_table(table)
+                if not any(char.isdigit() for char in text):  # If no numbers found
+                    # Try with original size
+                    text = pytesseract.image_to_string(
+                        table,
+                        config='--oem 3 --psm 6 -l eng'
+                    )
                 all_text.append(text)
             
             return "\n".join(all_text)
