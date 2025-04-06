@@ -4,7 +4,7 @@ from .base import TransactionParser
 
 class ItauParser(TransactionParser):
     def __init__(self):
-        """Initialize the parser with categories and classification rules."""
+        """Initialize the parser with classification rules."""
         super().__init__()
         
         # Define classification rules (description patterns -> [category, subcategory])
